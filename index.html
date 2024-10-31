@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Industry Deviation Prediction</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Industry Deviation Prediction</h1>
+        <form id="load-data-form" method="post" action="/load_data" enctype="multipart/form-data">
+            <label for="file">Upload Excel File:</label>
+            <input type="file" name="file" id="file" required>
+            <button type="submit">Load Data</button>
+        </form>
+
+        <form id="predict-deviation-form" method="post" action="/predict_deviation">
+            <label for="n_parts_per_day">Enter number of parts:</label>
+            <input type="number" name="n_parts_per_day" id="n_parts_per_day" required>
+            <button type="submit">Predict Deviation Date</button>
+        </form>
+
+        <div id="result"></div>
+        <img id="plot" src="" alt="Plot will appear here">
+
+        <script>
+            document.getElementById('load-data-form').onsubmit = async function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch('/load_data', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                document.getElementById('result').innerText = result.message;
+            };
+
+            document.getElementById('predict-deviation-form').onsubmit = async function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch('/predict_deviation', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                document.getElementById('result').innerText = Model RMSE: ${result.rmse};
+                document.getElementById('plot').src = result.plot_url;
+            };
+        </script>
+    </div>
+</body>
+</html>
